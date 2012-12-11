@@ -147,6 +147,9 @@ int main(int argc, char **argv) {
     
     if (optind < argc) {
         config.source_file = argv[optind];
+        if (!strcmp(config.source_file, "-")) {
+            config.source_file = "pipe:";
+        }
     }
     
     if (!config.source_file){
