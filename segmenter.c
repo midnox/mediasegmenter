@@ -546,7 +546,7 @@ int segmenter_write_playlist(SegmenterContext *context, IndexType type, char* ba
     fprintf(out, "#EXTM3U\n"
                  "#EXT-X-TARGETDURATION:%ld\n"
                  "#EXT-X-VERSION:3\n"
-                 "#EXT-X-MEDIA-SEQUENCE:%u\n", lround(context->max_duration), context->segment_sequence);
+                 "#EXT-X-MEDIA-SEQUENCE:%u\n", (long) ceil(context->max_duration), context->segment_sequence);
     
     switch (type) {
         case IndexTypeVOD:
@@ -561,12 +561,12 @@ int segmenter_write_playlist(SegmenterContext *context, IndexType type, char* ba
     
     int i;
     for (i = context->segment_sequence; i < context->segment_index; i++) {
-        fprintf(out, "#EXTINF:%ld,\n"
-                     "%s%s%u.%s\n", lround(segment_duration(context, i)), base_url, context->media_base_name, i, context->extension);
+        fprintf(out, "#EXTINF:%.3f,\n"
+                     "%s%s%u.%s\n", segment_duration(context, i), base_url, context->media_base_name, i, context->extension);
     }
     
     if ((type == IndexTypeEvent || type == IndexTypeVOD) && context->eof) {
-        fprintf(out, "#EXT-X-ENDLIST");
+        fprintf(out, "#EXT-X-ENDLIST\n");
     }
     
     segmenter_close_playlist(out);
